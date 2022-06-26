@@ -23,20 +23,19 @@ def custom_tokenizer(nlp):
 def read_texts(n):
     dirpath = os.path.dirname(os.getcwd()) + '\\corpus\\'
     js_docs = []
-    for file in os.listdir(dirpath):
-        if file.startswith('__'):
-            with open(dirpath+file, 'r') as f:
-                js = json.load(f)
-                if len(js['Author']) > n: # no more than n texts per author
-                    num = n
-                else: 
-                    num = len(js['Author'])
-                add_texts_to_json(js, num, js_docs)
+    with open(dirpath+'elementy_texts.json', 'r') as f:
+        js = json.load(f)
+        for key in js:
+            if len(key) > n: # no more than n texts per author
+                num = n
+            else:
+                num = len(js[key])
+            add_texts_to_json(js, num, key, js_docs)
     return js_docs
 
-def add_texts_to_json(json, n, texts):
+def add_texts_to_json(json, n, name, texts):
     for i in range(n):
-        text = json['Author'][i]['Full text']
+        text = json[name][i]['Full text']
         no_hyphen = re.sub('[\xad…]', '', text) # soft hyphen character          
         no_space = re.sub('[\xa0]', ' ', no_hyphen) # no-break space
         texts.append(no_space)
@@ -56,11 +55,6 @@ def get_named_ents(texts):
 def get_ngrams(texts):
     ngram = Phrases(texts, min_count=10, threshold=100)
     return ngram[texts]
-
-def get_nouns(texts):
-    return [[word for word in text \
-             if morph.parse(word)[0].tag.POS == 'NOUN'] \
-            for text in texts]
 
 def get_nouns_adj(texts):
     return [[word for word in text \
@@ -87,48 +81,11 @@ def remove_stopwords(texts):
         return [[word for word in text if re.search(r'[^a-zA-Z]+', word)] \
                 for text in data]
 
-def get_corpus_size(n):
-    texts = read_texts(n)
+def get_corpus_size(texts):
     tokens = [word_tokenize(doc) for doc in texts]
     tokens_clean = clean_texts(tokens)
     data = [[word for word in text if word] for text in tokens_clean]
     return sum([len(token) for token in data])
-
-def count_tokens(texts):
-    tokens = [word_tokenize(text) for text in texts]
-    tokens_clean = clean_texts(tokens)
-    data = [[word for word in text if word] for text in tokens_clean]
-    count = sum([len(token) for token in data])
-    return count, round(count/len(texts))  
-
-def get_name_num(file, path, n):
-    docs = []
-    with open(path+file, 'r') as f:
-        js = json.load(f)
-        name = js['Author'][0]['Author']
-        if len(js['Author']) > n: # no more than n texts per author
-            num = n
-        else:
-            num = len(js['Author'])
-        add_texts_to_json(js, num, docs)
-        return docs, name, num
-
-def get_stats(source, num):
-    dirpath = os.path.dirname(os.getcwd()) + '\\corpus\\'
-    n, m, k = 0, 0, 0
-    for file in os.listdir(dirpath):
-        if file.endswith(f'{source}.json'):
-            n += 1
-            texts, name, num_art = get_name_num(file, dirpath, num)
-            count, avg_count = count_tokens(texts)
-            k += count
-            m += num_art
-            print(f'{name}:\n\tNumber of articles: {num_art}' + 
-                f'\n\tTotal number of words: {count}' + 
-                f'\n\tAverage number of words in an article: {avg_count}\n')
-    print(f'Total number of authors: {n}' + 
-        f'\nTotal number of articles: {m}' + 
-        f'\nCorpus size (before preprocessing): {k:,}')
 
 
 # Load spaCy model
