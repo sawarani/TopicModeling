@@ -21,8 +21,7 @@ def custom_tokenizer(nlp):
                      token_match=None)
 
 def read_texts(n):
-    dirpath = os.path.dirname(os.getcwd())
-    dirpath += '\\corpus\\'
+    dirpath = os.path.dirname(os.getcwd()) + '\\corpus\\'
     js_docs = []
     for file in os.listdir(dirpath):
         if file.startswith('__'):
@@ -115,8 +114,7 @@ def get_name_num(file, path, n):
         return docs, name, num
 
 def get_stats(source, num):
-    dirpath = os.path.dirname(os.getcwd())
-    dirpath += '\\corpus\\'
+    dirpath = os.path.dirname(os.getcwd()) + '\\corpus\\'
     n, m, k = 0, 0, 0
     for file in os.listdir(dirpath):
         if file.endswith(f'{source}.json'):
