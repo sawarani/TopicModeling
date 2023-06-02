@@ -8,3 +8,5 @@ This is an overview of several TM techniques including:
 * [CTM](https://contextualized-topic-models.readthedocs.io/en/latest/introduction.html "Contextualized Topic Model")
 * [BERTopic](https://maartengr.github.io/BERTopic/ "BERTopic")
 * [BTM](https://bitermplus.readthedocs.io/en/latest/ "Biterm Topic Model")
+
+The corpus used is a compilation of Russian popular science texts samped from Elementy bolshoi nauki (https://elementy.ru/), an online media outlet covering various aspects of natural sciences and technology. It contains 2,289 popular science articles published between 2010 and 2023, or approximately 3.9m words. Preprocessing techniques include tokenization, lemmatization with pymorphy2, named entity recognition with spaCy, and collocation extraction with Gensim module Phrases.
